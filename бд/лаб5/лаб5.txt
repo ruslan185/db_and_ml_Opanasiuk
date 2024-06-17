@@ -1,0 +1,56 @@
+// 1.
+MATCH (o:Order {id: 'o2'})-[:CONTAINS]->(item:Item)
+RETURN item
+
+// 2.
+MATCH (o:Order {id: 'o1'})-[:CONTAINS]->(item:Item)
+RETURN sum(item.price) AS total_cost
+
+
+// 3.
+MATCH (c:Customer {id: 'c2'})-[:BOUGHT]->(o:Order)
+RETURN o
+
+MATCH (c:Customer {id: 'c2'})-[:BOUGHT]->(o:Order)
+RETURN o.id AS order_id, o.date AS order_date
+
+// 4.
+MATCH (c:Customer {id: 'c3'})-[:BOUGHT]->(:Order)-[:CONTAINS]->(i:Item)
+RETURN i
+
+
+// 5.
+MATCH (c:Customer {id: 'c2'})-[:BOUGHT]->(:Order)-[:CONTAINS]->(i:Item)
+RETURN COUNT(i) AS total_items
+
+
+// 6.
+MATCH (c:Customer {id: 'c3'})-[:BOUGHT]->(:Order)-[:CONTAINS]->(i:Item)
+RETURN SUM(i.price) AS total_spent
+
+
+// 7.
+MATCH (i:Item)<-[:CONTAINS]-(o:Order)
+RETURN i.name AS item_name, COUNT(o) AS purchase_count
+ORDER BY purchase_count DESC
+
+
+// 8.
+MATCH (c:Customer {id: 'c3'})-[:VIEW]->(item:Item)
+RETURN item.name AS viewed_item
+
+
+// 9.
+MATCH (item:Item {id: 'i1'})<-[:CONTAINS]-(o:Order {id:'o1'})-[:CONTAINS]->(related_item:Item)
+WHERE item <> related_item
+RETURN DISTINCT related_item
+
+
+// 10.
+MATCH (item:Item {id: 'i4'})<-[:CONTAINS]-(:Order)<-[:BOUGHT]-(customer:Customer)
+RETURN customer
+
+// 11.
+MATCH (customer:Customer {id: 'c3'})-[:VIEW]->(item:Item)
+WHERE NOT (customer)-[:BOUGHT]->(:Order)-[:CONTAINS]->(item)
+RETURN DISTINCT item.name AS item
